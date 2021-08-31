@@ -7,10 +7,17 @@ idLength = 24
 const app = express();
 // all writes are in their own function for recursion to deal with locking the data file. using a db would be better but im lazy and working with repl.it. Although now that I think about it I could likely use replit Database. im lazy though and rather just stick with this.
 
-/* ideas:
+/* 
+todo:
+allow changing UID
+make responses better (JSON)
+make apiDoc better for API routes.
+
+ideas:
 use a queue to write to the file rather then the lock im currently using.
 instead of array of users, json object of users with keys being uids
 add timestamps
+sqlite?
 */
 
 /* write template
@@ -37,14 +44,42 @@ function write() { // change function name
 
 app.get('/', (req, res) => {
   console.log(req.url);
-  fs.readFile("apiDoc.html", (err, data) => {
+  fs.readFile("pages/apiDoc.html", (err, data) => {
+    res.send(data.toString());
+  });
+});
+
+app.get('/start', (req, res) => { // i really should just use a real webserver.
+  console.log(req.url);
+  fs.readFile("pages/start.html", (err, data) => {
+    res.send(data.toString());
+  });
+});
+
+app.get('/signin', (req, res) => {
+  console.log(req.url);
+  fs.readFile("pages/signin.html", (err, data) => {
+    res.send(data.toString());
+  });
+});
+
+app.get('/register', (req, res) => {
+  console.log(req.url);
+  fs.readFile("pages/register.html", (err, data) => {
     res.send(data.toString());
   });
 });
 
 app.get('/app', (req, res) => {
   console.log(req.url);
-  fs.readFile("index.html", (err, data) => {
+  fs.readFile("pages/app.html", (err, data) => {
+    res.send(data.toString());
+  });
+});
+
+app.get('/js/lib.js', (req, res) => {
+  console.log(req.url);
+  fs.readFile("pages/js/lib.js", (err, data) => {
     res.send(data.toString());
   });
 });
@@ -147,8 +182,8 @@ function addItemWrite(res, uid, name, note, tags, count) {  // probably should a
         if (uindex > -1) {
           hash = genHash()
           found = false
-          for (i = 0; i < jsonData.users[index].items.length; i++) {
-            if (jsonData.users[index].items[i][0] == hash) {
+          for (i = 0; i < jsonData.users[uindex].items.length; i++) {
+            if (jsonData.users[uindex].items[i][0] == hash) {
               found = true;
               break;
             }
@@ -158,7 +193,7 @@ function addItemWrite(res, uid, name, note, tags, count) {  // probably should a
             lock = false;
             addItemWrite(res, uid, name, note, tags, count+1) // not efficent but im lazy and this is simple.
           } else {
-            jsonData.users[index].items.push([hash, false, name, note, tags])
+            jsonData.users[uindex].items.push([hash, false, name, note, tags])
             fs.writeFileSync("data.json", JSON.stringify(jsonData));
             res.send(hash)
           }
@@ -176,7 +211,7 @@ app.get('/api/v1/editItem', (req, res) => {
   console.log(req.url);
   if (req.query.uid != null && req.query.uid.length == idLength && req.query.iid != null && req.query.iid.length == idLength && req.query.name != null && req.query.note != null && req.query.tags != null) {
     delItemWrite(res, req.query.uid, req.query.iid)
-    addItemWrite(res, req.query.uid, req.query.name, req.query.note, JSON.parse(req.query.tags))
+    addItemWrite(res, req.query.uid, req.query.name, req.query.note, JSON.parse(req.query.tags), 0)
   } else {
     res.send("Invalid Parameters")
   }

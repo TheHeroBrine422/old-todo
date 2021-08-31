@@ -1,0 +1,21 @@
+<html>
+  <head>
+    <script src="/js/lib.js"></script>
+  </head>
+  <body>
+    <h1>To-Do - Register</h1>
+    <p>Below is your user id. This is your username and password. Back it up some where safe. It is also stored in your browser's local storage. This will not be shown to you again inside of the app.</p>
+    <p id="uid"></p>
+    <p><a href="/app">Go to app</a></p> 
+    <script>
+      if (!CheckUIDredirectToApp()) {
+        fetch('https://'+window.location.host+"/api/v1/register")
+          .then(response => response.text())
+          .then(data => {
+            document.getElementById("uid").innerText = data; 
+            localStorage.setItem("uid", data)
+          });
+      }
+    </script>
+  </body>
+</html>

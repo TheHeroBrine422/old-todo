@@ -1,0 +1,49 @@
+<html>
+  <head>
+    <script src="/js/lib.js"></script>
+    <!--<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    was thinking about using vue-->
+  </head>
+  <body>
+    <h1>To-Do - App</h1>
+    <p id="tabs"></p>
+    <br>
+    <table>
+      <thead></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <script>
+      var currentTag = "Default"
+      if (CheckInvalidUIDredirectToStart()) {
+        refreshButtons()
+        setTag(currentTag)
+      } 
+
+      function refreshButtons() {
+        uid = localStorage.getItem("uid")
+        let url = new URL("https://"+window.location.hostname+"/api/v1/getUser");
+        url.searchParams.set('uid', uid)
+        fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById("tabs").innerHTML = ""
+          for (i = 0; i < data.tags.length; i++) {
+            document.getElementById("tabs").innerHTML += "<button type=\"button\" onclick=\"setTag(\""+data.tags[i]+"\")\">"+data.tags[i]+"</button>"
+          }
+        })
+      }
+      
+      function setTag(tag) {
+        currentTag = tag
+
+      }
+
+      function refresh() {
+        refreshButtons()
+        setTag(currentTag)
+      }
+
+      setInterval(refresh, 5*60*1000) // refresh page every 5 minutes.
+    </script>
+  </body>
+</html>
