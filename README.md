@@ -2,8 +2,6 @@
 
 todo list web app made with nodejs. 
 
-### Status: WIP
+### Status: Abandonded
 
-Currently working on other projects, might come back to this later.
-
-It probably needs to have a change in data formatting. Probably should switch to SQL rather then a JSON file.
+I started working on this at one point just to kind of mess around with some stuff and never finished it. I started working on a new version of this around 1.5 years later and wanted to start fresh. That repo is at https://github.com/TheHeroBrine422/todo
